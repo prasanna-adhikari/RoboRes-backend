@@ -7,6 +7,7 @@ const register_route = require("./routes/registerRoute");
 const itemsRoute = require("./routes/itemsRoute");
 const cartRoute = require("./routes/cartRoute");
 const orderRoute = require("./routes/orderRoute");
+const feedRoute = require("./routes/feedbackRoute");
 const path = require("path");
 
 //////////////////////////////////////////////////////
@@ -22,5 +23,6 @@ app.use(register_route);
 app.use(itemsRoute);
 app.use(cartRoute);
 app.use(orderRoute);
+app.use(feedRoute);
 
 app.listen(5000);
