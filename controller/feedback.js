@@ -1,3 +1,4 @@
+const { response } = require("express");
 const Feedback = require("../model/feedbackModel");
 
 exports.postFeedback = async (req, res) => {
@@ -22,6 +23,19 @@ exports.getFeeds = async (req, res) => {
     res.status(200).json({ success: true, msg: "feed get successfuly", feeds });
   } catch (err) {
     console.log(err);
-    return res.status(500).json({ err: "Cant get feeds" });
+    return res.status(500).json({ success: false, err: "Cant get feeds" });
   }
+};
+
+exports.deleteFeeds = async (req, res) => {
+  const feedID = req.params.id;
+  Feedback.deleteOne({ _id: feedID })
+    .then((response) => {
+      return res
+        .status(200)
+        .json({ success: true, msg: "feed deleted successfuly" });
+    })
+    .catch((err) => {
+      return res.status(500).json({ success: false, err: "Cant get feeds" });
+    });
 };
