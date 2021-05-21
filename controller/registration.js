@@ -8,14 +8,9 @@ const jwt = require("jsonwebtoken");
 exports.postAddUser = async (req, res) => {
   const errors = validationResult(req);
   if (errors.isEmpty()) {
-    const name = req.body.name;
-    const phone = req.body.phone;
-    const dob = req.body.dob;
-    const address = req.body.address;
-    const password = req.body.password;
-    const email = req.body.email;
-    const role = req.body.role;
-    const username = req.body.username;
+    const { name, phone, dob, address, email, role, username, password } =
+      req.body;
+
     if (req.file == null) {
       // res.status(400).json({ error: "Invalid File" });
       console.log("no image added");
@@ -31,14 +26,14 @@ exports.postAddUser = async (req, res) => {
 
       const hash = await hashpassword(password);
       user = User({
-        name: name,
-        phone: phone,
-        email: email,
-        dob: dob,
-        address: address,
-        username: username,
-        password: hash,
-        role: role,
+        name,
+        phone,
+        email,
+        dob,
+        address,
+        username,
+        password,
+        role,
       });
       user
         .save()
@@ -65,6 +60,7 @@ exports.postAddUser = async (req, res) => {
     res.status(400).json({ success: false, error: errors.array() });
   }
 };
+//decrypt the password
 const hashpassword = (password) => {
   bcryptjs.hash(password);
 };
@@ -100,14 +96,9 @@ exports.updateUser = async (req, res) => {
   console.log("hit");
   try {
     const id = req.params.id;
-    const name = req.body.name;
-    const phone = req.body.phone;
-    const address = req.body.address;
-    const email = req.body.email;
-    const dob = req.body.dob;
-    const password = req.body.password;
-    const role = req.body.role;
-    const username = req.body.username;
+    const { name, phone, dob, address, email, role, username, password } =
+      req.body;
+
     let profile;
     if (req.file) {
       profile = req.file.path;
@@ -117,13 +108,13 @@ exports.updateUser = async (req, res) => {
 
     User.findByIdAndUpdate(id, {
       $set: {
-        name: name,
-        phone: phone,
-        address: address,
-        email: email,
-        dob: dob,
-        role: role,
-        profile: profile,
+        name,
+        phone,
+        address,
+        email,
+        dob,
+        role,
+        profile,
       },
     }).then(function () {
       res.json({ success: true });
