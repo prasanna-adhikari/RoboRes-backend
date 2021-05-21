@@ -18,11 +18,15 @@ router.post(
   "/user/register",
   [
     check("username", "Please provide a username").not().isEmpty(),
+    check("username", "username should be alphanumeric").isAlphanumeric(),
     check("password", "Please provide a password").not().isEmpty(),
-    check("password", "Password should be of 5 char").isLength({
-      min: 5,
-      max: 20,
-    }),
+    check("password", "Password should be of 5 char")
+      .isLength({
+        min: 5,
+        max: 20,
+      })
+      .matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])/)
+      .withMessage("must contain a Uppercase, number and special character"),
     // check('email', "Please provide a Password").isEmail(),
     // check('username', "Please provide a username").not().isEmpty(),
   ],
