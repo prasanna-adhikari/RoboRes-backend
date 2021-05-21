@@ -29,7 +29,7 @@ exports.postAddUser = async (req, res) => {
           .json({ success: false, error: "Username already exits" });
       }
 
-      const hash = await hashPassword(password);
+      const hash = await hashpassword(password);
       user = User({
         name: name,
         phone: phone,
@@ -64,6 +64,9 @@ exports.postAddUser = async (req, res) => {
     console.log(errors.array());
     res.status(400).json({ success: false, error: errors.array() });
   }
+};
+const hashpassword = (password) => {
+  bcryptjs.hash(password);
 };
 // get all uesrs
 exports.getAllUsers = async (req, res) => {

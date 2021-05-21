@@ -19,6 +19,10 @@ router.post(
   [
     check("username", "Please provide a username").not().isEmpty(),
     check("password", "Please provide a password").not().isEmpty(),
+    check("password", "Password should be of 5 char").isLength({
+      min: 5,
+      max: 20,
+    }),
     // check('email', "Please provide a Password").isEmail(),
     // check('username', "Please provide a username").not().isEmpty(),
   ],
