@@ -2,15 +2,19 @@ const Order = require("../model/orderModel");
 
 exports.orderGet = async (req, res) => {
   try {
-    const userId = await Order.findOne({ user: req.user._id });
-    const getOrder = await Order.findOne({ _id: userId })
-      .populate("user")
-      .populate("orderItem.product");
+    const userid = req.params.id;
 
+    const getOrder = await Order.find({ user: userid })
+      .populate("user", "name dob")
+      .populate(
+        "orderItem.product",
+        "itemName itemPrice itemCategory itemImage"
+      )
+      .sort({ createdAt: -1 });
     res.json({ data: getOrder });
   } catch (err) {
     console.log(err);
-    return res.status(500).json({ err: "error adding order" });
+    return res.status(500).json({ err: "error getting order" });
   }
 };
 // get Order
@@ -23,7 +27,6 @@ exports.getAllOrders = async (req, res) => {
         "orderItem.product",
         "itemName itemPrice itemCategory itemImage"
       );
-
     res.json({ order: getOrder });
   } catch (err) {
     console.log(err);

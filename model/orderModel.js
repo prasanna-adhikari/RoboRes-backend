@@ -15,6 +15,7 @@ const orderSchema = mongoose.Schema(
           required: true,
         },
         quantity: { type: Number },
+        total: { type: Number },
       },
     ],
   },
