@@ -14,7 +14,17 @@ const {
 
 const { verifyUser, verifyAdmin } = require("../middleware/auth");
 
-router.post("/user/register", profile.single("profile"), postAddUser);
+router.post(
+  "/user/register",
+  [
+    check("username", "Please provide a username").not().isEmpty(),
+    check("password", "Please provide a password").not().isEmpty(),
+    // check('email', "Please provide a Password").isEmail(),
+    // check('username', "Please provide a username").not().isEmpty(),
+  ],
+  profile.single("profile"),
+  postAddUser
+);
 
 // login user (login system)
 router.post("/user/login", loginUser);

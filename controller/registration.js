@@ -6,40 +6,64 @@ const jwt = require("jsonwebtoken");
 
 // add user
 exports.postAddUser = async (req, res) => {
-  const name = req.body.name;
-  const phone = req.body.phone;
-  const dob = req.body.dob;
-  const address = req.body.address;
-  const password = req.body.password;
-  const email = req.body.email;
-  const role = req.body.role;
-  const username = req.body.username;
-  if (req.file == null) {
-    // res.status(400).json({ error: "Invalid File" });
-    console.log("no image added");
-  }
-  bcryptjs.hash(password, 10, function (err, hash) {
-    const register = new User({
-      name: name,
-      phone: phone,
-      email: email,
-      dob: dob,
-      address: address,
-      username: username,
-      password: hash,
-      role: role,
-    });
-    register
-      .save()
-      .then(function (result) {
+  const errors = validationResult(req);
+  if (errors.isEmpty()) {
+    const name = req.body.name;
+    const phone = req.body.phone;
+    const dob = req.body.dob;
+    const address = req.body.address;
+    const password = req.body.password;
+    const email = req.body.email;
+    const role = req.body.role;
+    const username = req.body.username;
+    if (req.file == null) {
+      // res.status(400).json({ error: "Invalid File" });
+      console.log("no image added");
+    }
+
+    try {
+      let user = await User.findOne({ username });
+      if (user) {
         return res
-          .status(201)
-          .json({ success: true, msg: "Registration Success!!!" });
-      })
-      .catch(function (err) {
-        res.status(500).json({ error: err });
+          .status(409)
+          .json({ success: false, error: "Username already exits" });
+      }
+
+      const hash = await hashPassword(password);
+      user = User({
+        name: name,
+        phone: phone,
+        email: email,
+        dob: dob,
+        address: address,
+        username: username,
+        password: hash,
+        role: role,
       });
-  });
+      user
+        .save()
+        .then(function (result) {
+          return res
+            .status(201)
+            .json({ success: true, msg: "Registration Success!!!" });
+        })
+        .catch(function (err) {
+          res.status(500).json({ error: err });
+        });
+    } catch (error) {
+      console.log(error);
+      return res.status(400).json({
+        success: false,
+        error: "Could not register user",
+      });
+    }
+    // bcryptjs.hash(password, 5, function (err, hash) {
+
+    // });
+  } else {
+    console.log(errors.array());
+    res.status(400).json({ success: false, error: errors.array() });
+  }
 };
 // get all uesrs
 exports.getAllUsers = async (req, res) => {
