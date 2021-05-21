@@ -17,8 +17,11 @@ const { verifyUser, verifyAdmin } = require("../middleware/auth");
 router.post(
   "/user/register",
   [
-    check("username", "Please provide a username").not().isEmpty(),
-    check("username", "username should be alphanumeric").isAlphanumeric(),
+    check("username", "Please provide a username")
+      .not()
+      .isEmpty()
+      .isAlphanumeric()
+      .withMessage("username must contain letters and numbers"),
     check("password", "Please provide a password").not().isEmpty(),
     check("password", "Password should be of 5 char")
       .isLength({
@@ -26,8 +29,10 @@ router.post(
         max: 20,
       })
       .matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])/)
-      .withMessage("must contain a Uppercase, number and special character"),
-    // check('email', "Please provide a Password").isEmail(),
+      .withMessage(
+        "must contain atleast an Uppercase, a number and a special character"
+      ),
+    //check("dob", "Please provide a Password").isDate(),
     // check('username', "Please provide a username").not().isEmpty(),
   ],
   profile.single("profile"),
