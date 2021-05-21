@@ -3,9 +3,7 @@ const Items = require("../model/itemsModel");
 // Add items
 exports.postAddItem = async (req, res) => {
   try {
-    const itemName = req.body.itemName;
-    const itemCategory = req.body.itemCategory;
-    const itemPrice = req.body.itemPrice;
+    const { itemName, itemCategory, itemPrice } = req.body;
 
     // if (req.file == null) {
     //   return res.status(400).json({ error: "Invalid File" });
@@ -49,21 +47,20 @@ exports.getSingleItems = async (req, res) => {
 exports.UpdateItem = async (req, res) => {
   try {
     const id = req.params.id;
-    const itemName = req.body.itemName;
-    const itemCategory = req.body.itemCategory;
-    const itemSubCategory = req.body.itemSubCategory;
-    const itemPrice = req.body.itemPrice;
-    // if (req.file == null) {
-    //   return res.status(400).json({ error: "Invalid image" });
-    // }
-    // const itemImage = req.file.path;
+    const { itemName, itemCategory, itemPrice } = req.body;
+
+    let itemImage;
+    if (req.file) {
+      itemImage = req.file.path;
+    } else {
+      itemImage = req.body.itemImage;
+    }
     Items.findByIdAndUpdate(id, {
       $set: {
-        itemName: itemName,
-        itemCategory: itemCategory,
-        itemSubCategory: itemSubCategory,
-        itemPrice: itemPrice,
-        // itemImage: itemImage,
+        itemName,
+        itemCategory,
+        itemPrice,
+        itemImage,
       },
     }).then(function () {
       return res.send({ success: true, message: "Updated succesfully" });

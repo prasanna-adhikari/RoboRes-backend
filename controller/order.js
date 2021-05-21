@@ -34,13 +34,11 @@ exports.getAllOrders = async (req, res) => {
   }
 };
 exports.postOrder = async (req, res) => {
-  const orderItem = req.body.orderItem;
-  const user = req.body.user;
-  console.log(user, orderItem);
+  const { orederItem, user } = req.body;
 
-  const orderPost = new Order({
-    user: user,
-    orderItem: orderItem,
+  orderPost = Order({
+    user,
+    orderItem,
   });
   orderPost
     .save()

@@ -109,12 +109,6 @@ exports.removeCartItems = (req, res) => {
   }
 };
 exports.decreaseCartItems = (req, res) => {
-  // const productId = req.params.productId;
-  // // const cartProductIndex = this.cartItems.product.findIndex((p) => {
-  // //   return productID == p.product;
-  // // });
-  // let updatedCartItems = [req.body.cartItems];
-  // console.log(updatedCartItems);
   Cart.findOne({ user: req.user._id }).exec((error, cart) => {
     if (error) {
       console.log(error);
