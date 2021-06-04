@@ -36,6 +36,6 @@ exports.deleteFeeds = async (req, res) => {
         .json({ success: true, msg: "feed deleted successfuly" });
     })
     .catch((err) => {
-      return res.status(500).json({ success: false, err: "Cant get feeds" });
+      return res.status(500).json({ success: false, err: "Cant delete feeds" });
     });
 };

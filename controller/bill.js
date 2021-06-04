@@ -1,21 +1,53 @@
 const Bill = require("../model/billModel");
-const Items = require("../model/itemsModel");
-const Registration = require("../model/registrationModel");
+const Order = require("../model/orderModel");
 
-exports.getBilling = async (req, res) => {
-  const { username, role } = req.user;
+exports.postBilling = async (req, res) => {
+  const { orderItem, user, grandTotal, orderId } = req.body;
+
+  bill = Bill({
+    user,
+    orderItem,
+    grandTotal,
+  });
+  await bill
+    .save()
+    .then(async function (result) {
+      const order = await Order.findOne({ _id: orderId });
+      order.status = "Paid";
+      order.save();
+      console.log(order);
+      return res
+        .status(201)
+        .json({ success: true, msg: "Billing add Success!!!" });
+    })
+    .catch(function (err) {
+      res.status(500).json({ error: err });
+    });
+};
+exports.getAllBills = async (req, res) => {
   try {
-    const username = req.params.username;
-    const user = await Registration.findById(userId);
-    const data = await bill.cart.populate("items.product").execPopulate();
-    let bill;
-    if (role == "Admin" || role == "Billing") {
-      bill = await Bill.find();
-    } else {
-      bill = await Bill.find({ user: username });
-    }
-    res.render("device-billing", { data: data.items, username, access });
-  } catch (error) {
-    console.log(error);
+    const getBill = await Bill.find()
+      .populate("user", "name")
+      .populate(
+        "orderItem.product",
+        "itemName itemPrice itemCategory itemImage"
+      );
+    res.json({ bill: getBill });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ err: "error adding order" });
+  }
+};
+exports.deleteBill = async (req, res) => {
+  try {
+    const billId = req.params.id;
+    await Order.deleteOne({ _id: billId });
+
+    return res
+      .status(200)
+      .json({ success: true, msg: "bill deleted successfuly" });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ err: "error deleting  order" });
   }
 };

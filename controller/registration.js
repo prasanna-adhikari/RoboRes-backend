@@ -1,6 +1,6 @@
 const User = require("../model/registrationModel");
 
-const bcryptjs = require("bcryptjs");
+const bcrypt = require("bcrypt");
 const { check, validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
 
@@ -21,10 +21,10 @@ exports.postAddUser = async (req, res) => {
       if (user) {
         return res
           .status(409)
-          .json({ success: false, error: "Username already exits" });
+          .json({ success: false, msg: "Username already exits" });
       }
 
-      const hash = await hashpassword(password);
+      const hash = await hashPassword(password);
       user = User({
         name,
         phone,
@@ -32,7 +32,7 @@ exports.postAddUser = async (req, res) => {
         dob,
         address,
         username,
-        password,
+        password: hash,
         role,
       });
       user
@@ -49,7 +49,7 @@ exports.postAddUser = async (req, res) => {
       console.log(error);
       return res.status(400).json({
         success: false,
-        error: "Could not register user",
+        msg: "Could not register user",
       });
     }
     // bcryptjs.hash(password, 5, function (err, hash) {
@@ -61,9 +61,21 @@ exports.postAddUser = async (req, res) => {
   }
 };
 //decrypt the password
-const hashpassword = (password) => {
-  bcryptjs.hash(password);
-};
+async function hashPassword(password) {
+  const saltRounds = 10;
+
+  const hashedPassword = await new Promise((resolve, reject) => {
+    bcrypt.hash(password, saltRounds, function (err, hash) {
+      if (err) reject(err);
+      resolve(hash);
+    });
+  });
+
+  return hashedPassword;
+}
+// const hashpassword = (password) => {
+//   bcrypt.hashSych(password);
+// };
 // get all uesrs
 exports.getAllUsers = async (req, res) => {
   try {
@@ -155,7 +167,7 @@ exports.loginUser = async (req, res) => {
           .json({ msg: "Incorrect username or password!!" });
       }
       // if user exist
-      bcryptjs.compare(password, userData.password, function (err, result) {
+      bcrypt.compare(password, userData.password, function (err, result) {
         if (result === false) {
           return res
             .status(401)

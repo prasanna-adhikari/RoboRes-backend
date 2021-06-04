@@ -18,6 +18,12 @@ const orderSchema = mongoose.Schema(
         total: { type: Number },
       },
     ],
+    grandTotal: { type: Number },
+    status: {
+      type: String,
+      enum: ["Paid", "Unpaid"],
+      default: "Unpaid",
+    },
   },
   { timestamps: true }
 );
